@@ -1,5 +1,8 @@
 [Dolphin]
 PreviewsShown=true
-Timestamp=2013,1,27,0,27,57
+Timestamp=2013,1,27,0,32,54
 Version=3
 VisibleRoles=Icons_text
+
+[Settings]
+HiddenFilesShown=true
