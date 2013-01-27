@@ -3,6 +3,16 @@ var helpWindow = new helpWindow();
 
 Amarok.Window.addToolsMenu("Googlemusic", "Configure Google Music...", Amarok.Info.scriptPath() + "/images/logo.png");
 Amarok.Window.ToolsMenu.Googlemusic['triggered()'].connect(configureDialog);
+Amarok.Window.addToolsSeparator();
+Amarok.Window.addToolsMenu("updateList", "Update Google Music List", Amarok.Info.scriptPath() + "/icon.png");
+Amarok.Window.ToolsMenu.updateList['triggered()'].connect(updateListJson);
+
+function updateListJson() {
+    executeScript();
+    update = false;
+    newItems();
+    Amarok.alert("Your music list is updated... Restart Amarok please.");
+}
 
 function configurationEditor() {
     this.window = new QMainWindow(this);
@@ -34,6 +44,10 @@ function configurationEditor() {
         helpWindow.events();
     };
 
+this.repo = function (){
+	browser = new QProcess();
+	browser.start("xdg-open", ["https://bitbucket.org/jbatalle/google-music-for-amarok"]);
+	};
     this.web = function () {
         browser = new QProcess();
         browser.start("xdg-open", ["http://kde-apps.org/content/show.php?content=155090"]);
@@ -137,7 +151,7 @@ function configurationEditor() {
     this.dialog.sizeHint = new QSize(350, 400);
     this.dialog.size = new QSize(350, 400);
     this.window.move(W, H);
-    this.window.setWindowTitle("Configure - SocialRok");
+    this.window.setWindowTitle("Configure - Google Music");
     this.window.windowIcon = new QIcon(Amarok.Info.scriptPath() + "/images/logo.png");
     this.window.setCentralWidget(this.dialog);
 
@@ -148,6 +162,8 @@ function configurationEditor() {
     this.helpMenu = this.window.menuBar().addMenu("Help");
     this.helpHlp = this.helpMenu.addAction(new QIcon(Amarok.Info.scriptPath() + "/images/help.png"), "Help");
     this.helpHlp.triggered.connect(this, this.help);
+    this.helpRepo = this.helpMenu.addAction(new QIcon(Amarok.Info.scriptPath() + "/images/logo.png"), "Repository");
+    this.helpRepo.triggered.connect(this, this.repo);
     this.helpWeb = this.helpMenu.addAction(new QIcon(Amarok.Info.scriptPath() + "/images/logo.png"), "WebSite");
     this.helpWeb.triggered.connect(this, this.web);
 
@@ -168,14 +184,14 @@ function helpWindow() {
     helpText = "<h3>How to configure Google Music for Amarok</h3>";
     helpText += "This app allows you to listen the music that you have uploaded in Google Music!<br /><br />";
     helpText += "In order to listen your music you need an account on Google Music.<br>";
-    helpText += "To grant access to the Google Music click on <b>Tools</b> menu put your username and password of Google. ";
+    helpText += "To grant access to the Google Music click on <b>Tools</b> menu and put your username and password of Google. ";
     helpText += "<i>This actions require a restart of Amarok, or alternatively reload the Script.</i><br /><br />";
     helpText += "<b>Username:</b> Your username/email used in Google.<br />";
     helpText += "<b>Password:</b> Your password.<br />";
-    helpText += "<b>Skype Tab</b><br />";
-    helpText += "If you have a Skype account, you can authorize SocialRok to change the mood text on every track change. To do this, you must have Skype installed and running. When Skype will ask you to allow SocialRok to change mood text check \"Remember this selection\" and then click YES! To work, curl and python-dbus must be installed in your system.<br /><br />";
-    helpText += "<b>Flickr Tab</b><br />";
-    helpText += "If you have a Flickr account, you can authorize SocialRok to upload the Cover Arts on your space so you can post the Covers on Facebook as a link instead of as a normal picture, if you're interested to this option, go to Grant Access page for Facebook and after Login you can Grant Access for Flickr. This option can also be activated after you have already Granted Access to Facebook.<br /><br />";
+    helpText += "<br/><b>Google Music</b><br />";
+    helpText += "The extracted url only can player one time. After listen a song, if you want to listen again the same song, you need to load another time the song.<br /><br />";
+    helpText += "<b>Next versions</b><br />";
+    helpText += "In the following versions I try to improve these. If you want to collaborate with this script, you are free to do it. And also you can contact with me if you have a question.<br /><br />";
 
 
     var QRect = new QDesktopWidget;

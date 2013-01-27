@@ -28,9 +28,7 @@ function executeScript() {
     var textStream = new QTextStream(Response, QIODevice.ReadOnly);
     var tinyURL = textStream.readAll();
     //Amarok.alert(args[1]);
-    //Amarok.alert(tinyURL)
-    //Amarok.alert(Response)
-    //Amarok.alert(textStream) 
+    //Amarok.alert(tinyURL) 
 }
 
 function getUrl(id) {
@@ -49,14 +47,19 @@ function getUrl(id) {
     var Response = p.readAllStandardOutput();
     var textStream = new QTextStream(Response, QIODevice.ReadOnly);
     var tinyURL = textStream.readAll();
-    Amarok.alert(tinyURL);
+//    Amarok.alert(tinyURL);
     return tinyURL;
 }
 
 
 function ImportJsonFile(json_file) {
-    eval("var JSON_obj = " + ReadTextFile(json_file));
-    return JSON_obj;
+    if(json_file != null){
+    	eval("var JSON_obj = " + ReadTextFile(json_file));
+    	return JSON_obj;
+    }
+    else{
+    	return null;    	
+    	}
 }
 
 function ScriptBaseDir() {

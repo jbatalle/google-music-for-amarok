@@ -16,18 +16,20 @@ var serviceDataJson;
 
 function newItems() {
     Amarok.debug("save stations");
-
+    Amarok.debug(ScriptBaseDir());	
+	
     serviceDataJson = ImportJsonFile(ListFiles(ScriptBaseDir(), "ListSongs.json")[0]);
-    var categoryObj = myRadioService.addCategory(categoryName, categoryImageFullPath, categoryHtmlDescr);
-    //  Amarok.alert("New items "+serviceDataJson.kind);
-    var items = serviceDataJson.data.items;
-
-    for (var i in items) {
-        categoryObj.addStream(items[i].title, items[i].id, items[i].artist);
+    if(serviceDataJson != null){
+    	var categoryObj = myRadioService.addCategory(categoryName, categoryImageFullPath, categoryHtmlDescr);
+    	//  Amarok.alert("New items "+serviceDataJson.kind);
+    	var items = serviceDataJson.data.items;
+	
+   	 for (var i in items) {
+        	categoryObj.addStream(items[i].title, items[i].id, items[i].artist);
+    	}
     }
     update = false;
     onPopulating(delayedArgs[0], delayedArgs[1], delayedArgs[2]);
-    Amarok.debug("end");
 }
 
 
@@ -120,17 +122,8 @@ function onCustomize() {
 }
 
 Amarok.configured.connect(onConfigure);
-
 Amarok.Window.addToolsSeparator();
-Amarok.Window.addToolsMenu("updateList", "Update Google Music List", "amarok");
 
-function actionClicked() {
-    Amarok.debug("Updating music list...");
-    executeScript();
-    update = false;
-    newItems();
-}
 script = new GoogleMusic();
 script.populate.connect(onPopulating);
 script.customize.connect(onCustomize);
-Amarok.Window.ToolsMenu.updateList['triggered()'].connect(actionClicked);
