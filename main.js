@@ -33,8 +33,8 @@ function newItems() {
 }
 
 
-function GoogleMusic() {
-    ScriptableServiceScript.call(this, "Google Music", 2, "Songs allocated in Google music", "GoogleMusic2", false);
+function GoogleMusicforAmarok() {
+    ScriptableServiceScript.call(this, "Google Music for Amarok", 2, "Songs allocated in Google music", "GoogleMusic2", false);
     Amarok.debug("ok.");
 }
 
@@ -122,8 +122,8 @@ function onCustomize() {
 }
 
 Amarok.configured.connect(onConfigure);
-Amarok.Window.addToolsSeparator();
 
-script = new GoogleMusic();
+
+script = new GoogleMusicforAmarok();
 script.populate.connect(onPopulating);
 script.customize.connect(onCustomize);
