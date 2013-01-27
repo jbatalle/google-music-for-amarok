@@ -1,0 +1,31 @@
+v1.6:
+- Added button to manually chat playing track in all Skype open chats. 
+- Added option to chat playing track in all Skype open chats on every track change.
+- Fixed some bugs on changing mood text on Skype.
+- Created a workaround for Amarok bug that on track Change gives multiple notify. (I hope)
+
+v1.5:
+- Retrieves more descriptive informations on errors when sends post fails, especially on facebook that has the API quite selective, so you can get an idea of what's wrong!
+
+v1.4:
+- Many bugs correct on server side. (The correction of these errors is continuous and is not necessarily linked to release of new versions.)
+- Force resizing to 100x100 for cover art when uploading on Flickr, 
+  because Facebook uses 75x75 image as link and as result the operation is more fast and there are minor possibility of errors.
+- Added skype as Social Networks (curl and python-dbus must be installed.)
+- Changed the method for open the web pages.
+- Fixed minor graphics bugs.
+
+v1.3:
+- Added Flickr option, for upload Cover Arts in a space that allows to create a link instead of as normal picture when you post on Facebook. Read the Help for the Configuration.
+- Implemented Google+ in the code but disabled it because the API actually is read only.
+
+v1.2:
+- Added option for attach Cover Art (if exist) in the Post message.
+- WARNING: for existing facebook users, the app must be deleted from App Center and then must be granted again (sorry).
+
+v1.1:
+- Fixed message options for Twitter and changed default text.
+- Others minor bugs fixed.
+
+v1.0:
+- First script release.
