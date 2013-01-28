@@ -41,24 +41,20 @@ function extractUrl(){
 	echo $url > url
 	url=$(sed 's/\\u0026/\&/g' url)
 #  url=${url//\\\0026/&}
-#	echo $url > url
-rm url
-rm url.json
+
+	rm url
+	rm url.json
 	echo $url
 }
 getList="getList"
 getUrlSong="getUrlSong"
-#echo $1>file1.txt
-#echo $action>file12.txt
-#echo $2>file2.txt
-#echo $3>file3.txt
+
 if [ "$action" == "$getList" ]; then
 	email=$2
 	password=$3
-	#echo $1>file232.txt
 	auth $email $password
 	return_val=$?
-#	echo $return_val>return.txt
+	echo $return_val>return.txt
 	if [ "$?" == "" ]; then
 		echo "offline"
 		echo $return_val>return.txt

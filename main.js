@@ -6,7 +6,8 @@ Importer.include("libs.js");
 var delayedArgs = null;
 var update = true;
 
-var myRadioService = new RadioService("RADIO SERVICE", "aaa", "HTML DEscription", "aaaaaa", "Message");
+//var myRadioService = new RadioService("RADIO SERVICE", "aaa", "HTML DEscription", "aaaaaa", "Message");
+var myRadioService = new RadioService("Google Music SERVICE", "", "Listen your uploaded Music!", "", "You need a Google Music Account");
 var categoryName = "Google Music";
 var categoryImageFullPath = ScriptBaseDir() + "/Defaults/Category.default.image.png";
 var categoryHtmlDescr = "text";
@@ -15,9 +16,6 @@ var categoryObj = myRadioService.addCategory(categoryName, categoryImageFullPath
 var serviceDataJson;
 
 function newItems() {
-    Amarok.debug("save stations");
-    Amarok.debug(ScriptBaseDir());	
-	
     serviceDataJson = ImportJsonFile(ListFiles(ScriptBaseDir(), "ListSongs.json")[0]);
     if(serviceDataJson != null){
     	var categoryObj = myRadioService.addCategory(categoryName, categoryImageFullPath, categoryHtmlDescr);
@@ -35,7 +33,6 @@ function newItems() {
 
 function GoogleMusicforAmarok() {
     ScriptableServiceScript.call(this, "Google Music for Amarok", 2, "Songs allocated in Google music", "GoogleMusic2", false);
-    Amarok.debug("ok.");
 }
 
 function onConfigure() {
@@ -43,7 +40,6 @@ function onConfigure() {
 }
 
 function onPopulating(level, callbackData, filter) {
-    Amarok.debug("ON POPULATING--------------------------------------------");
     if (update == true) {
         delayedArgs = [level, callbackData, filter];
         newItems();
@@ -52,9 +48,7 @@ function onPopulating(level, callbackData, filter) {
     }
     update = true;
     Amarok.debug("Populating... " + level);
-    //Amarok.alert("CAllback... "+callbackData);
 
-    Amarok.debug("Number of categories: " + myRadioService.categoriesList.length);
     if (level == 1) {
         for (var cat_index = 0; cat_index < myRadioService.categoriesList.length; cat_index++) {
             var category = myRadioService.categoriesList[cat_index];
@@ -78,7 +72,6 @@ Stations have a playable url, but not categories */
             var stationsList = category.stationsList;
             for (var sta_index = 0; sta_index < stationsList.length; sta_index++) {
                 var station = stationsList[sta_index];
-                Amarok.debug("DEBUUUUUUG             " + station.stationName);
                 item = Amarok.StreamItem;
                 item.level = 0;
                 item.callbackData = "";
@@ -103,7 +96,6 @@ function getNewURL(frow, row) {
     var google_for_amarok = "Google Music";
     if (Amarok.Playlist.trackAt(row).album == google_for_amarok) {
         //  Amarok.alert(Amarok.Playlist.trackAt(row).album);
-
         var uri = getUrl(Amarok.Playlist.trackAt(row).path);
         uri = uri.replace(/[\n\r]/g, ''); //delete carrier return
         Amarok.debug(uri);
@@ -113,8 +105,6 @@ function getNewURL(frow, row) {
 }
 Amarok.Playlist.trackInserted.connect(getNewURL);
 
-
-
 function onCustomize() {
     var currentDir = Amarok.Info.scriptPath() + "/";
     var iconPixmap = new QPixmap(currentDir + "icon.png");
@@ -122,8 +112,6 @@ function onCustomize() {
 }
 
 Amarok.configured.connect(onConfigure);
-
-
 script = new GoogleMusicforAmarok();
 script.populate.connect(onPopulating);
 script.customize.connect(onCustomize);

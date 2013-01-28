@@ -27,19 +27,16 @@ function executeScript() {
     var Response = p.readAllStandardOutput();
     var textStream = new QTextStream(Response, QIODevice.ReadOnly);
     var tinyURL = textStream.readAll();
-    //Amarok.alert(args[1]);
-    //Amarok.alert(tinyURL) 
 }
 
 function getUrl(id) {
-    //  id="4abbd809-0d8e-3852-9301-a61a7f2fce3b";
     var dirScript = "../.kde4/share/apps/amarok/scripts/google_music/"; //~/Documents by default
     var nameScript = "google_music.sh"; //getUrl
     var args = new Array();
     args[0] = nameScript;
     args[1] = "getUrlSong";
     args[2] = id;
-    //Amarok.alert(id);
+
     var p = new QProcess();
     p.setWorkingDirectory(dirScript);
     p.start("sh", args, QIODevice.ReadOnly);
@@ -47,7 +44,6 @@ function getUrl(id) {
     var Response = p.readAllStandardOutput();
     var textStream = new QTextStream(Response, QIODevice.ReadOnly);
     var tinyURL = textStream.readAll();
-//    Amarok.alert(tinyURL);
     return tinyURL;
 }
 
@@ -59,7 +55,7 @@ function ImportJsonFile(json_file) {
     }
     else{
     	return null;    	
-    	}
+    }
 }
 
 function ScriptBaseDir() {
