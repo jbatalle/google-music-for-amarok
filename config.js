@@ -53,7 +53,7 @@ this.repo = function (){
 	};
     this.web = function () {
         browser = new QProcess();
-        browser.start("xdg-open", ["http://kde-apps.org/content/show.php?content=155090"]);
+        browser.start("xdg-open", ["http://kde-apps.org/content/show.php?content=156637"]);
     };
 
     this.readConfiguration = function () {
