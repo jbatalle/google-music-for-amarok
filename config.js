@@ -8,10 +8,13 @@ Amarok.Window.addToolsMenu("updateList", "Update Google Music List", Amarok.Info
 Amarok.Window.ToolsMenu.updateList['triggered()'].connect(updateListJson);
 
 function updateListJson() {
-    executeScript();
+    var state = executeScript("default");
     update = false;
     newItems();
-    Amarok.alert("Your music list is updated... Restart Amarok please.");
+    if(state == '')
+      var state = executeScript("option1);
+    if(state != '')
+      Amarok.alert("Your music list is updated... Restart Amarok please.");
 }
 
 function configurationEditor() {

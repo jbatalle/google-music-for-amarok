@@ -9,17 +9,20 @@ function detectCurl() {
     else false;
 }
 
-function executeScript() {
+function executeScript(type) {
     Config["gpUserID"] = Amarok.Script.readConfig("gpUserID", "");
     Config["gpPass"] = Amarok.Script.readConfig("gpPass", "");
-    var dirScript = "../.kde4/share/apps/amarok/scripts/google_music/"; //~/Documents by default
+    if(type == "default")
+      var dirScript = ".kde4/share/apps/amarok/scripts/google_music/"; //~/Documents by default
+    else
+      var dirScript = "../.kde4/share/apps/amarok/scripts/google_music/"; //~/Documents by default other systems
     var nameScript = "google_music.sh";
+    
     var args = new Array();
     args[0] = nameScript;
     args[1] = "getList";
     args[2] = Config["gpUserID"];
     args[3] = Config["gpPass"];
-
     var p = new QProcess();
     p.setWorkingDirectory(dirScript);
     p.start("sh", args, QIODevice.ReadOnly);
@@ -27,10 +30,14 @@ function executeScript() {
     var Response = p.readAllStandardOutput();
     var textStream = new QTextStream(Response, QIODevice.ReadOnly);
     var tinyURL = textStream.readAll();
+    return tinyURL;
 }
 
 function getUrl(id) {
-    var dirScript = "../.kde4/share/apps/amarok/scripts/google_music/"; //~/Documents by default
+    if(type == "default")
+      var dirScript = ".kde4/share/apps/amarok/scripts/google_music/"; //~/Documents by default
+    else
+      var dirScript = "../.kde4/share/apps/amarok/scripts/google_music/"; //~/Documents by default other systems
     var nameScript = "google_music.sh"; //getUrl
     var args = new Array();
     args[0] = nameScript;

@@ -7,14 +7,15 @@ function auth() {
 	email=$1
 	password=$2
    authResponse=$(curl "$clientLoginUrl" --data-urlencode Email="$email" --data-urlencode Passwd="$password" -d accountType=GOOGLE -d service="$service")
-   authToken="${authResponse##*=}"
-   SID="${authResponse:4:288}"
-   LID="${authResponse:298:288}"
-   return $SID
+   authToken="$(echo "$authResponse" | egrep "^Auth=" | cut -d= -f2-)"
+  SID="$(echo "$authResponse" | egrep "^SID=" | cut -d= -f2-)"
+  LID="$(echo "$authResponse" | egrep "^LID=" | cut -d= -f2-)"
+  [ "$SID" ] || return 1
+  return 0
 }
 
 function listSongs(){
-	curl --header "Authorization: GoogleLogin auth=${authToken}"      https://www.googleapis.com/sj/v1beta1/tracks > listSongs.json
+	curl --header "Authorization: GoogleLogin auth=${authToken}"      https://www.googleapis.com/sj/v1beta1/tracks > ListSongs.json
 }
 
 function getCookie() {
@@ -49,16 +50,18 @@ function extractUrl(){
 getList="getList"
 getUrlSong="getUrlSong"
 
+	echo $getUrlSong>return.txt
+
 if [ "$action" == "$getList" ]; then
 	email=$2
 	password=$3
 	auth $email $password
 	return_val=$?
 	echo $return_val>return.txt
-	if [ "$?" == "" ]; then
+	if [ $return_val -ne 0 ]; then
 		echo "offline"
 		echo $return_val>return.txt
-	elif [ "$?" != "" ]; then
+	else
 		listSongs 
 		getCookie $email $password 
 	fi
