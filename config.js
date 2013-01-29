@@ -12,7 +12,7 @@ function updateListJson() {
     update = false;
     newItems();
     if(state == '')
-      var state = executeScript("option1);
+      var state = executeScript("option1");
     if(state != '')
       Amarok.alert("Your music list is updated... Restart Amarok please.");
 }
