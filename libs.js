@@ -9,6 +9,30 @@ function detectCurl() {
     else false;
 }
 
+function curl(type){
+   if(type == "default")
+      var dirScript = ".kde4/share/apps/amarok/scripts/google_music/"; //~/Documents by default
+    else
+      var dirScript = "../.kde4/share/apps/amarok/scripts/google_music/"; //~/Documents by default other systems
+    var nameScript = "google_music.sh";
+    var args = new Array();
+    var clientLoginUrl="https://www.google.com/accounts/ClientLogin";
+  var service="sj";
+  var email = Config["gpUserID"];
+  var password = Config["gpPass"];
+    args[0] = clientLoginUrl+' --data-urlencode Email="'+email+'" --data-urlencode Passwd="'+password+'" -d accountType=GOOGLE -d service=sj';
+        
+    var p = new QProcess();
+    p.setWorkingDirectory(dirScript);
+    p.start("curl", args, QIODevice.ReadOnly);
+    p.waitForFinished()
+    var Response = p.readAllStandardOutput();
+    var textStream = new QTextStream(Response, QIODevice.ReadOnly);
+    var checkPython = textStream.readAll();
+    if (checkPython) return true;
+    else false;
+}
+
 function executeScript(type) {
     Config["gpUserID"] = Amarok.Script.readConfig("gpUserID", "");
     Config["gpPass"] = Amarok.Script.readConfig("gpPass", "");
