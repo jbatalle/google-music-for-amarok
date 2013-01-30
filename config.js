@@ -9,7 +9,9 @@ Amarok.Window.ToolsMenu.updateList['triggered()'].connect(updateListJson);
 
 function updateListJson() {
 //    var state = executeScript("default");
-    var state = curl("default");
+    var state = curlAuth("default");
+    listSongs(state);
+    getCookie("default");
     update = false;
     newItems();
     if(state == '')

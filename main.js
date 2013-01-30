@@ -96,7 +96,9 @@ function getNewURL(frow, row) {
     var google_for_amarok = "Google Music";
     if (Amarok.Playlist.trackAt(row).album == google_for_amarok) {
         //  Amarok.alert(Amarok.Playlist.trackAt(row).album);
-        var uri = getUrl(Amarok.Playlist.trackAt(row).path);
+//        var uri = getUrl(Amarok.Playlist.trackAt(row).path);
+        var uri = getSong(Amarok.Playlist.trackAt(row).path);
+
         uri = uri.replace(/[\n\r]/g, ''); //delete carrier return
         Amarok.debug(uri);
         Amarok.Playlist.addMedia(new QUrl(uri));
