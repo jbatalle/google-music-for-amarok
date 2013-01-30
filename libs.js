@@ -9,9 +9,9 @@ function detectCurl() {
     else false;
 }
 
-function doCurl(args, dirScript){
+function doCurl(args) {
     var p = new QProcess();
-    p.setWorkingDirectory(dirScript);
+    p.setWorkingDirectory(Amarok.Info.scriptPath());
     p.start("curl", args, QIODevice.ReadOnly);
     p.waitForFinished()
     var Response = p.readAllStandardOutput();
@@ -19,17 +19,15 @@ function doCurl(args, dirScript){
     return textStream.readAll();
 }
 
-function getStreamByCurl(args, dirScript) {
+function getStreamByCurl(args) {
     var p = new QProcess();
-    p.setWorkingDirectory(dirScript);
+    p.setWorkingDirectory(Amarok.Info.scriptPath());
     p.start("curl", args, QIODevice.ReadOnly);
     p.waitForFinished()
     return p.readAllStandardOutput();
 }
 
-function curlAuth(type) {
-    if (type == "default") var dirScript = ".kde4/share/apps/amarok/scripts/google_music/"; //~/Documents by default
-    else var dirScript = "../.kde4/share/apps/amarok/scripts/google_music/"; //~/Documents by default other systems
+function curlAuth() {
     var args = new Array();
     var clientLoginUrl = "https://www.google.com/accounts/ClientLogin";
     var email = Config["gpUserID"];
@@ -45,8 +43,8 @@ function curlAuth(type) {
     args[7] = "-d";
     args[8] = "service=sj";
 
-    var authResponse = doCurl(args, dirScript);
-/*
+    var authResponse = doCurl(args);
+    /*
     var auth = authResponse;
     var re = new RegExp("SID=(.+)", "g");
     var myArray = auth.match(re);
@@ -55,29 +53,29 @@ function curlAuth(type) {
     Amarok.debug(SID[1]);
     Amarok.debug(LSID[1]);
 */
-    m = auth.match(/SID=([\s\S]*?)LSID=([\s\S]*?)Auth=([\s\S]*)/)
+    m = authResponse.match(/SID=([\s\S]*?)LSID=([\s\S]*?)Auth=([\s\S]*)/)
     var SID = m[1];
     var LSID = m[2];
     var Auth = m[3];
     return Auth;
 }
 
-function listSongs(AuthToken, type) {
-    if (type == "default") var dirScript = ".kde4/share/apps/amarok/scripts/google_music/"; //~/Documents by default
-    else var dirScript = "../.kde4/share/apps/amarok/scripts/google_music/"; //~/Documents by default other systems
+function listSongs(AuthToken) {
     var args = new Array();
-
+    Amarok.debug(AuthToken);
     args[0] = "--header";
     args[1] = "Authorization: GoogleLogin auth=" + AuthToken;
     args[2] = "https://www.googleapis.com/sj/v1beta1/tracks";
+    args[3] = ">";
+    args[4] = "ListSongs.json";
 
-    var Response = getStreamByCurl(args, dirScript);
-/*    var textStream = new QTextStream(Response, QIODevice.ReadOnly);
+    var Response = getStreamByCurl(args);
+    var textStream = new QTextStream(Response, QIODevice.ReadOnly);
     var tinyURL = textStream.readAll();
     var listSongs = tinyURL;
-    Amarok.debug(tinyURL);
-*/
-    var file = new QFile(".kde4/share/apps/amarok/scripts/google_music/ListSongs.json");
+    //    Amarok.debug(tinyURL);
+    Amarok.debug(Amarok.Info.scriptPath());
+    var file = new QFile(Amarok.Info.scriptPath() + "/ListSongs.json");
     file.open(QIODevice.WriteOnly);
     file.write(Response);
     file.close();
@@ -87,17 +85,14 @@ function getCookie(type) {
     var email = Config["gpUserID"];
     var password = Config["gpPass"];
 
-    if (type == "default") var dirScript = ".kde4/share/apps/amarok/scripts/google_music/"; //~/Documents by default
-    else var dirScript = "../.kde4/share/apps/amarok/scripts/google_music/"; //~/Documents by default other systems
     var args = new Array();
-
     args[0] = "-b";
     args[1] = "cookie.txt";
     args[2] = "-c";
     args[3] = "cookie.txt";
     args[4] = "https://accounts.google.com/ServiceLogin?service=sj";
 
-    var authResponse = doCurl(args, dirScript);
+    var authResponse = doCurl(args);
     var auth = authResponse;
     var re = new RegExp('id="dsh" value="(.*)"', "g");
     var myArray = auth.match(re);
@@ -113,10 +108,10 @@ function getCookie(type) {
 
     var DSH = dsh[0];
     var GALX = galx[0];
-    getCookie2(DSH, GALX, dirScript);
+    getCookie2(DSH, GALX);
 }
 
-function getCookie2(DSH, GALX, dirScript) {
+function getCookie2(DSH, GALX) {
     var email = Config["gpUserID"];
     var password = Config["gpPass"];
     var args = new Array();
@@ -130,7 +125,7 @@ function getCookie2(DSH, GALX, dirScript) {
     args[7] = "POST";
     args[8] = "https://accounts.google.com/ServiceLoginAuth";
 
-    var authResponse = doCurl(args, dirScript);
+    var authResponse = doCurl(args);
     var auth = authResponse;
 }
 
