@@ -4,34 +4,37 @@ function detectCurl() {
     p.waitForFinished()
     var Response = p.readAllStandardOutput();
     var textStream = new QTextStream(Response, QIODevice.ReadOnly);
-    var checkPython = textStream.readAll();
-    if (checkPython) return true;
+    var checkCurl = textStream.readAll();
+    if (checkCurl) return true;
     else false;
 }
 
 function doCurl(args, dirScript){
-	var p = new QProcess();
- 	p.setWorkingDirectory(dirScript);
- 	p.start("curl", args, QIODevice.ReadOnly);
-	p.waitForFinished()
- 	var Response = p.readAllStandardOutput();
-	var textStream = new QTextStream(Response, QIODevice.ReadOnly);
-	var tinyURL = textStream.readAll();
-	return tinyURL;
+    var p = new QProcess();
+    p.setWorkingDirectory(dirScript);
+    p.start("curl", args, QIODevice.ReadOnly);
+    p.waitForFinished()
+    var Response = p.readAllStandardOutput();
+    var textStream = new QTextStream(Response, QIODevice.ReadOnly);
+    return textStream.readAll();
+}
+
+function getStreamByCurl(args, dirScript) {
+    var p = new QProcess();
+    p.setWorkingDirectory(dirScript);
+    p.start("curl", args, QIODevice.ReadOnly);
+    p.waitForFinished()
+    return p.readAllStandardOutput();
 }
 
 function curlAuth(type) {
-    type = "default";
     if (type == "default") var dirScript = ".kde4/share/apps/amarok/scripts/google_music/"; //~/Documents by default
     else var dirScript = "../.kde4/share/apps/amarok/scripts/google_music/"; //~/Documents by default other systems
-    var nameScript = "google_music.sh";
     var args = new Array();
     var clientLoginUrl = "https://www.google.com/accounts/ClientLogin";
-    var service = "sj";
     var email = Config["gpUserID"];
     var password = Config["gpPass"];
 
-    //   args[0] = clientLoginUrl+" --data-urlencode Email="+email+" --data-urlencode Passwd="+password+" -d accountType=GOOGLE -d service=sj";
     args[0] = clientLoginUrl;
     args[1] = "--data-urlencode";
     args[2] = "Email=" + email;
@@ -41,55 +44,39 @@ function curlAuth(type) {
     args[6] = "accountType=GOOGLE";
     args[7] = "-d";
     args[8] = "service=sj";
-    var p = new QProcess();
-    p.setWorkingDirectory(dirScript);
-    p.start("curl", args, QIODevice.ReadOnly);
-    p.waitForFinished()
-    var Response = p.readAllStandardOutput();
-    var textStream = new QTextStream(Response, QIODevice.ReadOnly);
-    var tinyURL = textStream.readAll();
-    var authResponse = tinyURL;
-    Amarok.debug(tinyURL);
-    var auth = tinyURL;
+
+    var authResponse = doCurl(args, dirScript);
+/*
+    var auth = authResponse;
     var re = new RegExp("SID=(.+)", "g");
     var myArray = auth.match(re);
     var SID = myArray[0].split("SID=");
     var LSID = myArray[1].split("SID=");
     Amarok.debug(SID[1]);
     Amarok.debug(LSID[1]);
-
+*/
     m = auth.match(/SID=([\s\S]*?)LSID=([\s\S]*?)Auth=([\s\S]*)/)
     var SID = m[1];
     var LSID = m[2];
     var Auth = m[3];
-	return Auth;
+    return Auth;
 }
 
-function listSongs(AuthToken) {
-//    curl--header "Authorization: GoogleLogin auth=${authToken}"
-//    https: //www.googleapis.com/sj/v1beta1/tracks > ListSongs.json
-    type = "default";
+function listSongs(AuthToken, type) {
     if (type == "default") var dirScript = ".kde4/share/apps/amarok/scripts/google_music/"; //~/Documents by default
     else var dirScript = "../.kde4/share/apps/amarok/scripts/google_music/"; //~/Documents by default other systems
-    var nameScript = "google_music.sh";
     var args = new Array();
 
     args[0] = "--header";
     args[1] = "Authorization: GoogleLogin auth=" + AuthToken;
     args[2] = "https://www.googleapis.com/sj/v1beta1/tracks";
-    //args[3] = ">";
-    //    args[4] = "ListSongs.json";
 
-    var p = new QProcess();
-    p.setWorkingDirectory(dirScript);
-    p.start("curl", args, QIODevice.ReadOnly);
-    p.waitForFinished()
-    var Response = p.readAllStandardOutput();
-    var textStream = new QTextStream(Response, QIODevice.ReadOnly);
+    var Response = getStreamByCurl(args, dirScript);
+/*    var textStream = new QTextStream(Response, QIODevice.ReadOnly);
     var tinyURL = textStream.readAll();
     var listSongs = tinyURL;
     Amarok.debug(tinyURL);
-
+*/
     var file = new QFile(".kde4/share/apps/amarok/scripts/google_music/ListSongs.json");
     file.open(QIODevice.WriteOnly);
     file.write(Response);
@@ -97,143 +84,71 @@ function listSongs(AuthToken) {
 }
 
 function getCookie(type) {
-var email = Config["gpUserID"];
+    var email = Config["gpUserID"];
     var password = Config["gpPass"];
-    
+
     if (type == "default") var dirScript = ".kde4/share/apps/amarok/scripts/google_music/"; //~/Documents by default
     else var dirScript = "../.kde4/share/apps/amarok/scripts/google_music/"; //~/Documents by default other systems
-    var nameScript = "google_music.sh";
     var args = new Array();
 
     args[0] = "-b";
     args[1] = "cookie.txt";
     args[2] = "-c";
-args[3] = "cookie.txt";
-args[4] = "https://accounts.google.com/ServiceLogin?service=sj";
+    args[3] = "cookie.txt";
+    args[4] = "https://accounts.google.com/ServiceLogin?service=sj";
 
-    var p = new QProcess();
-    p.setWorkingDirectory(dirScript);
-    p.start("curl", args, QIODevice.ReadOnly);
-    p.waitForFinished()
-    var Response = p.readAllStandardOutput();
-    var textStream = new QTextStream(Response, QIODevice.ReadOnly);
-    var tinyURL = textStream.readAll();
-    var listSongs = tinyURL;
-    Amarok.debug(tinyURL);
-    var auth = tinyURL;
+    var authResponse = doCurl(args, dirScript);
+    var auth = authResponse;
     var re = new RegExp('id="dsh" value="(.*)"', "g");
     var myArray = auth.match(re);
-var dsh = myArray[0].split('value="');
-var dsh = dsh[1].split('"');
-Amarok.debug(dsh[0]);
-var DSH = dsh[0];
+    var dsh = myArray[0].split('value="');
+    var dsh = dsh[1].split('"');
+    Amarok.debug(dsh[0]);
+
     var re = new RegExp('  value="(.*)"', "g");
     var myArray = auth.match(re);
-Amarok.debug(myArray[0]);
-var galx = myArray[0].split('value="');
-var galx = galx[1].split('"');
-Amarok.debug(galx[0]);
+    var galx = myArray[0].split('value="');
+    var galx = galx[1].split('"');
+    Amarok.debug(galx[0]);
 
-var GALX = galx[0];
-getCookie2(DSH, GALX);
+    var DSH = dsh[0];
+    var GALX = galx[0];
+    getCookie2(DSH, GALX, dirScript);
 }
 
-function getCookie2(DSH, GALX){
-	if (type == "default") var dirScript = ".kde4/share/apps/amarok/scripts/google_music/"; //~/Documents by default
-    else var dirScript = "../.kde4/share/apps/amarok/scripts/google_music/"; //~/Documents by default other systems
-    
-	var email = Config["gpUserID"];
+function getCookie2(DSH, GALX, dirScript) {
+    var email = Config["gpUserID"];
     var password = Config["gpPass"];
-	var args = new Array();
+    var args = new Array();
     args[0] = "-b";
     args[1] = "cookie.txt";
     args[2] = "-c";
-args[3] = "cookie.txt";
-args[4] = "-d";
-args[5] = "service=sj&dsh="+DSH+"&GALX="+GALX+"&pstMsg=1&dnConn=&checkConnection=youtube%3A138%3A1&checkedDomains=youtube&timeStmp=&secTok=&Email="+email+"&PersistentCookie=no&Passwd="+password+"&signIn=Sign+in";
-args[6] = "-X";
-args[7] = "POST";
-args[8] = "https://accounts.google.com/ServiceLoginAuth";
+    args[3] = "cookie.txt";
+    args[4] = "-d";
+    args[5] = "service=sj&dsh=" + DSH + "&GALX=" + GALX + "&pstMsg=1&dnConn=&checkConnection=youtube%3A138%3A1&checkedDomains=youtube&timeStmp=&secTok=&Email=" + email + "&PersistentCookie=no&Passwd=" + password + "&signIn=Sign+in";
+    args[6] = "-X";
+    args[7] = "POST";
+    args[8] = "https://accounts.google.com/ServiceLoginAuth";
 
-    var p = new QProcess();
-    p.setWorkingDirectory(dirScript);
-    p.start("curl", args, QIODevice.ReadOnly);
-    p.waitForFinished()
-    var Response = p.readAllStandardOutput();
-    var textStream = new QTextStream(Response, QIODevice.ReadOnly);
-    var tinyURL = textStream.readAll();
-    var listSongs = tinyURL;
-    Amarok.debug(tinyURL);
-    var auth = tinyURL;
-	}
-	
-	function getSong(songId){
-var dirScript = ".kde4/share/apps/amarok/scripts/google_music/"; //~/Documents by default
-//    else var dirScript = "../.kde4/share/apps/amarok/scripts/google_music/"; //~/Documents by default other systems
-    
-		var args = new Array();
+    var authResponse = doCurl(args, dirScript);
+    var auth = authResponse;
+}
+
+function getSong(songId) {
+    var dirScript = ".kde4/share/apps/amarok/scripts/google_music/"; //~/Documents by default
+
+    var args = new Array();
     args[0] = "-b";
     args[1] = "cookie.txt";
     args[2] = "-c";
-args[3] = "cookie.txt";
-args[4] = "https://music.google.com/music/play?u=0&songid="+songId+"&pt=e";
-///args[6] = ">";
-//args[7] = "url.json";
+    args[3] = "cookie.txt";
+    args[4] = "https://music.google.com/music/play?u=0&songid=" + songId + "&pt=e";
 
-    var p = new QProcess();
-    p.setWorkingDirectory(dirScript);
-    p.start("curl", args, QIODevice.ReadOnly);
-    p.waitForFinished()
-    var Response = p.readAllStandardOutput();
-    var textStream = new QTextStream(Response, QIODevice.ReadOnly);
-    var tinyURL = textStream.readAll();
-    var listSongs = tinyURL;
-    Amarok.debug(tinyURL);
-    return tinyURL;
+    var authResponse = doCurl(args, dirScript);
+    var song = (new Function("return " + authResponse))();
+    Amarok.debug(song.url);
+    return song.url;
 }
-
-function executeScript(type) {
-    Config["gpUserID"] = Amarok.Script.readConfig("gpUserID", "");
-    Config["gpPass"] = Amarok.Script.readConfig("gpPass", "");
-    if (type == "default") var dirScript = ".kde4/share/apps/amarok/scripts/google_music/"; //~/Documents by default
-    else var dirScript = "../.kde4/share/apps/amarok/scripts/google_music/"; //~/Documents by default other systems
-    var nameScript = "google_music.sh";
-
-    var args = new Array();
-    args[0] = nameScript;
-    args[1] = "getList";
-    args[2] = Config["gpUserID"];
-    args[3] = Config["gpPass"];
-    var p = new QProcess();
-    p.setWorkingDirectory(dirScript);
-    p.start("sh", args, QIODevice.ReadOnly);
-    p.waitForFinished();
-    var Response = p.readAllStandardOutput();
-    var textStream = new QTextStream(Response, QIODevice.ReadOnly);
-    var tinyURL = textStream.readAll();
-    return tinyURL;
-}
-
-function getUrl(id) {
-    if (type == "default") var dirScript = ".kde4/share/apps/amarok/scripts/google_music/"; //~/Documents by default
-    else var dirScript = "../.kde4/share/apps/amarok/scripts/google_music/"; //~/Documents by default other systems
-    var nameScript = "google_music.sh"; //getUrl
-    var args = new Array();
-    args[0] = nameScript;
-    args[1] = "getUrlSong";
-    args[2] = id;
-
-    var p = new QProcess();
-    p.setWorkingDirectory(dirScript);
-    p.start("sh", args, QIODevice.ReadOnly);
-    p.waitForFinished();
-    var Response = p.readAllStandardOutput();
-    var textStream = new QTextStream(Response, QIODevice.ReadOnly);
-    var tinyURL = textStream.readAll();
-    return tinyURL;
-
-}
-
 
 function ImportJsonFile(json_file) {
     if (json_file != null) {

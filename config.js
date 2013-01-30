@@ -8,15 +8,17 @@ Amarok.Window.addToolsMenu("updateList", "Update Google Music List", Amarok.Info
 Amarok.Window.ToolsMenu.updateList['triggered()'].connect(updateListJson);
 
 function updateListJson() {
-//    var state = executeScript("default");
-    var state = curlAuth("default");
-    listSongs(state);
+    var authToken = curlAuth("default");
+    listSongs(authToken, "default");
     getCookie("default");
     update = false;
     newItems();
-    if(state == '')
-      var state = curl("option1");
-    if(state != '')
+    if(authToken == ''){
+      var authToken = curlAuth("option1");
+      listSongs(authToken, "option1");
+	    getCookie("option1");
+    }
+    if(authToken != '')
       Amarok.alert("Your music list is updated... Restart Amarok please.");
 }
 

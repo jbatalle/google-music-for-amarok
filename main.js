@@ -6,7 +6,6 @@ Importer.include("libs.js");
 var delayedArgs = null;
 var update = true;
 
-//var myRadioService = new RadioService("RADIO SERVICE", "aaa", "HTML DEscription", "aaaaaa", "Message");
 var myRadioService = new RadioService("Google Music SERVICE", "", "Listen your uploaded Music!", "", "You need a Google Music Account");
 var categoryName = "Google Music";
 var categoryImageFullPath = ScriptBaseDir() + "/Defaults/Category.default.image.png";
@@ -30,7 +29,6 @@ function newItems() {
     onPopulating(delayedArgs[0], delayedArgs[1], delayedArgs[2]);
 }
 
-
 function GoogleMusicforAmarok() {
     ScriptableServiceScript.call(this, "Google Music for Amarok", 2, "Songs allocated in Google music", "GoogleMusic2", false);
 }
@@ -40,6 +38,10 @@ function onConfigure() {
 }
 
 function onPopulating(level, callbackData, filter) {
+	if(!detectCurl){
+		Amarok.alert("Curl is not installed in the system!");
+		return;
+		}
     if (update == true) {
         delayedArgs = [level, callbackData, filter];
         newItems();
