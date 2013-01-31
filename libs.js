@@ -1,6 +1,6 @@
 /*
- *		This Script allows you to listen the music allocated in google
- *		music account using Amarok
+ *  This Script allows you to listen the music allocated in google
+ *  music account using Amarok
  *
  * Copyright (C) 
  *
