@@ -1,3 +1,27 @@
+/*
+ *		This Script allows you to listen the music allocated in google
+ *		music account using Amarok
+ *
+ * Copyright (C) 
+ *
+ *  (C)  2013 Josep Batalle Oronich <jbatalle3@gmail.com>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Version: 1.2
+ */
+
 Importer.loadQtBinding("qt.core");
 Importer.loadQtBinding("qt.gui");
 Importer.include("config.js");
@@ -6,7 +30,6 @@ Importer.include("libs.js");
 var delayedArgs = null;
 var update = true;
 
-//var myRadioService = new RadioService("RADIO SERVICE", "aaa", "HTML DEscription", "aaaaaa", "Message");
 var myRadioService = new RadioService("Google Music SERVICE", "", "Listen your uploaded Music!", "", "You need a Google Music Account");
 var categoryName = "Google Music";
 var categoryImageFullPath = ScriptBaseDir() + "/Defaults/Category.default.image.png";
@@ -30,7 +53,6 @@ function newItems() {
     onPopulating(delayedArgs[0], delayedArgs[1], delayedArgs[2]);
 }
 
-
 function GoogleMusicforAmarok() {
     ScriptableServiceScript.call(this, "Google Music for Amarok", 2, "Songs allocated in Google music", "GoogleMusic2", false);
 }
@@ -40,6 +62,10 @@ function onConfigure() {
 }
 
 function onPopulating(level, callbackData, filter) {
+	if(!detectCurl){
+		Amarok.alert("Curl is not installed in the system!");
+		return;
+		}
     if (update == true) {
         delayedArgs = [level, callbackData, filter];
         newItems();
@@ -96,7 +122,9 @@ function getNewURL(frow, row) {
     var google_for_amarok = "Google Music";
     if (Amarok.Playlist.trackAt(row).album == google_for_amarok) {
         //  Amarok.alert(Amarok.Playlist.trackAt(row).album);
-        var uri = getUrl(Amarok.Playlist.trackAt(row).path);
+//        var uri = getUrl(Amarok.Playlist.trackAt(row).path);
+        var uri = getSong(Amarok.Playlist.trackAt(row).path);
+
         uri = uri.replace(/[\n\r]/g, ''); //delete carrier return
         Amarok.debug(uri);
         Amarok.Playlist.addMedia(new QUrl(uri));
