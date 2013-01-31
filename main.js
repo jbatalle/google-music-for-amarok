@@ -6,7 +6,6 @@ Importer.include("libs.js");
 var delayedArgs = null;
 var update = true;
 
-//var myRadioService = new RadioService("RADIO SERVICE", "aaa", "HTML DEscription", "aaaaaa", "Message");
 var myRadioService = new RadioService("Google Music SERVICE", "", "Listen your uploaded Music!", "", "You need a Google Music Account");
 var categoryName = "Google Music";
 var categoryImageFullPath = ScriptBaseDir() + "/Defaults/Category.default.image.png";
@@ -30,7 +29,6 @@ function newItems() {
     onPopulating(delayedArgs[0], delayedArgs[1], delayedArgs[2]);
 }
 
-
 function GoogleMusicforAmarok() {
     ScriptableServiceScript.call(this, "Google Music for Amarok", 2, "Songs allocated in Google music", "GoogleMusic2", false);
 }
@@ -40,6 +38,10 @@ function onConfigure() {
 }
 
 function onPopulating(level, callbackData, filter) {
+	if(!detectCurl){
+		Amarok.alert("Curl is not installed in the system!");
+		return;
+		}
     if (update == true) {
         delayedArgs = [level, callbackData, filter];
         newItems();
@@ -96,7 +98,9 @@ function getNewURL(frow, row) {
     var google_for_amarok = "Google Music";
     if (Amarok.Playlist.trackAt(row).album == google_for_amarok) {
         //  Amarok.alert(Amarok.Playlist.trackAt(row).album);
-        var uri = getUrl(Amarok.Playlist.trackAt(row).path);
+//        var uri = getUrl(Amarok.Playlist.trackAt(row).path);
+        var uri = getSong(Amarok.Playlist.trackAt(row).path);
+
         uri = uri.replace(/[\n\r]/g, ''); //delete carrier return
         Amarok.debug(uri);
         Amarok.Playlist.addMedia(new QUrl(uri));
