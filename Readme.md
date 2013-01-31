@@ -2,11 +2,11 @@ Google Music for Amarok
 
 This script allows you to listen your music allocated in your account in Google Music in your Amarok player.
 
-INSTRUCTIONS
+== INSTRUCTIONS ==
 Download this script and put it into scripts directory (usually ~/.kde/share/apps/amarok/scripts/). Then, active the script in your Amarok 
 configuration.
 
-IMPORTANT
+== IMPORTANT ==
 You need to have installed curl.
 
 Once the plugin is installed, you can see a new option in Tools Menu. Here you have to put your google account. Then, you can download the 
