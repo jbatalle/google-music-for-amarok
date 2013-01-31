@@ -1,3 +1,8 @@
+/*
+
+Version: 1.2
+*/
+
 function detectCurl() {
     var p = new QProcess();
     p.start("which", ["curl"], QIODevice.ReadOnly);

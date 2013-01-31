@@ -1,2 +1,4 @@
+v1.2:
+- Bash script functions passed to javascript.
 v1.0:
 - First script release.

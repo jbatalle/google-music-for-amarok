@@ -7,18 +7,10 @@ Download this script and put it into scripts directory (usually ~/.kde/share/app
 configuration.
 
 IMPORTANT
-You need to give execution permissions to the google_music.sh file.
-
-You can use the following command: 
-
-  chmod +x ~/.kde4/share/apps/amarok/scripts/google_music/google_music.sh
-  
-or if you stay inside the folder:
-
-  chmod +x google_music.sh
+You need to have installed curl.
 
 Once the plugin is installed, you can see a new option in Tools Menu. Here you have to put your google account. Then, you can download the 
-list of songs pushing the button allocated in the Tools Menu ("Update Google Music List"). After a few seconds, AMarok shows an alert in 
+list of songs pushing the button allocated in the Tools Menu ("Update Google Music List"). After a few seconds, Amarok shows an alert in 
 order to confirm the correct downloaded. Then restart Amarok to check the list of songs downloaded.
 
 At this moment is only a basic system, works fine but needs more little changes in order to improve the reliability.
