@@ -21,6 +21,7 @@
  *
  * Version: 1.2
  */
+var Config = Array();
 
 function detectCurl() {
     var p = new QProcess();
@@ -50,10 +51,19 @@ function getStreamByCurl(args) {
     p.waitForFinished()
     return p.readAllStandardOutput();
 }
-
+function readConfiguration() {
+        try {
+            Config["gpUserID"] = Amarok.Script.readConfig("gpUserID", "");
+            Config["gpPass"] = Amarok.Script.readConfig("gpPass", "");
+        } catch (err) {
+            Amarok.debug(err);
+        }
+        return true;
+    };
 function curlAuth() {
     var args = new Array();
     var clientLoginUrl = "https://www.google.com/accounts/ClientLogin";
+readConfiguration();
     var email = Config["gpUserID"];
     var password = Config["gpPass"];
 
@@ -145,7 +155,7 @@ function getCookie2(DSH, GALX) {
     args[3] = "cookie.txt";
     args[4] = "-d";
     args[5] = "service=sj&dsh=" + DSH + "&GALX=" + GALX + "&pstMsg=1&dnConn=&checkConnection=youtube%3A138%3A1&checkedDomains=youtube&timeStmp=&secTok=&Email=" + email + "&PersistentCookie=no&Passwd=" + password + "&signIn=Sign+in";
-    args[6] = "-X";
+    args[6] = "-X";//music.google.com
     args[7] = "POST";
     args[8] = "https://accounts.google.com/ServiceLoginAuth";
 
@@ -154,8 +164,6 @@ function getCookie2(DSH, GALX) {
 }
 
 function getSong(songId) {
-    var dirScript = ".kde4/share/apps/amarok/scripts/google_music/"; //~/Documents by default
-
     var args = new Array();
     args[0] = "-b";
     args[1] = "cookie.txt";
@@ -163,7 +171,10 @@ function getSong(songId) {
     args[3] = "cookie.txt";
     args[4] = "https://music.google.com/music/play?u=0&songid=" + songId + "&pt=e";
 
-    var authResponse = doCurl(args, dirScript);
+    var authResponse = doCurl(args);
+    Amarok.debug(authResponse);
+    if(authResponse.match("^<HTM"))//In the first execution doesn't work! We need more cookies: sjsaid value
+					authResponse = doCurl(args);//And after this don't get the name of the song, only a number
     var song = (new Function("return " + authResponse))();
     Amarok.debug(song.url);
     return song.url;
