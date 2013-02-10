@@ -43,7 +43,7 @@ function newItems() {
     if(serviceDataJson != null){
     	var categoryObj = myRadioService.addCategory(categoryName, categoryImageFullPath, categoryHtmlDescr);
     	//  Amarok.alert("New items "+serviceDataJson.kind);
-    	var items = serviceDataJson.data.items;
+    	var items = serviceDataJson.data;
 	
    	 for (var i in items) {
         	categoryObj.addStream(items[i].title, items[i].id, items[i].artist);
