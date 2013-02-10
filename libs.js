@@ -21,7 +21,6 @@
  *
  * Version: 1.2
  */
-
 function detectCurl() {
     var p = new QProcess();
     p.start("which", ["curl"], QIODevice.ReadOnly);
@@ -90,18 +89,46 @@ function listSongs(AuthToken) {
     args[0] = "--header";
     args[1] = "Authorization: GoogleLogin auth=" + AuthToken;
     args[2] = "https://www.googleapis.com/sj/v1beta1/tracks";
-    args[3] = ">";
-    args[4] = "ListSongs.json";
 
     var Response = getStreamByCurl(args);
     var textStream = new QTextStream(Response, QIODevice.ReadOnly);
     var tinyURL = textStream.readAll();
     var listSongs = tinyURL;
-    //    Amarok.debug(tinyURL);
+
     Amarok.debug(Amarok.Info.scriptPath());
+/*
     var file = new QFile(Amarok.Info.scriptPath() + "/ListSongs.json");
     file.open(QIODevice.WriteOnly);
     file.write(Response);
+    file.close();
+
+    serviceDataJson = ImportJsonFile(ListFiles(ScriptBaseDir(), "ListSongs.json")[0]);
+    */
+    eval("var JSON_obj = " + tinyURL);
+    serviceDataJson = JSON_obj;
+    if (serviceDataJson != null) {
+        var items = serviceDataJson.data.items;
+        var newJsonFile = {
+            "data": [{}]
+        };
+
+        for (var i in items) {
+            newJsonFile.data.push({
+                "title": items[i].title,
+                "id": items[i].id,
+                "artist": items[i].artist
+            });
+        }
+
+    }
+
+    var jsonString = JSON.stringify(newJsonFile);
+ 
+    var jsonArray = new QByteArray();
+    jsonArray.append(jsonString);
+    var file = new QFile(Amarok.Info.scriptPath() + "/ListSongs.json");
+    file.open(QIODevice.WriteOnly);
+    file.write(jsonArray);
     file.close();
 }
 

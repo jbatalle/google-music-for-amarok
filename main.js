@@ -29,6 +29,8 @@ Importer.include("libs.js");
 
 var delayedArgs = null;
 var update = true;
+var currentFilter = "";
+
 
 var myRadioService = new RadioService("Google Music SERVICE", "", "Listen your uploaded Music!", "", "You need a Google Music Account");
 var categoryName = "Google Music";
@@ -54,7 +56,7 @@ function newItems() {
 }
 
 function GoogleMusicforAmarok() {
-    ScriptableServiceScript.call(this, "Google Music for Amarok", 2, "Songs allocated in Google music", "GoogleMusic2", false);
+    ScriptableServiceScript.call(this, "Google Music for Amarok", 2, "Songs allocated in Google music", "GoogleMusic2", true);
 }
 
 function onConfigure() {
@@ -62,6 +64,12 @@ function onConfigure() {
 }
 
 function onPopulating(level, callbackData, filter) {
+	
+ 		filter        = filter.replace( "%20", " " );
+  filter        = filter.trim();
+  currentFilter = filter.toLowerCase();
+  Amarok.debug(filter);
+  
 	if(!detectCurl){
 		Amarok.alert("Curl is not installed in the system!");
 		return;
@@ -97,7 +105,14 @@ Stations have a playable url, but not categories */
             var category = myRadioService.categoriesList[cat_index];
             var stationsList = category.stationsList;
             for (var sta_index = 0; sta_index < stationsList.length; sta_index++) {
-                var station = stationsList[sta_index];
+var station = stationsList[sta_index];
+            	var nameStation = station.stationName;
+									var stationDesc = station.stationHtmlDescription;
+            	if(currentFilter != null){
+            	if(nameStation.indexOf( currentFilter ) != -1 ||stationDesc.indexOf( currentFilter ) != -1 ){
+            		
+            		
+                
                 item = Amarok.StreamItem;
                 item.level = 0;
                 item.callbackData = "";
@@ -111,6 +126,8 @@ Stations have a playable url, but not categories */
 a station does not any image associated
 That's why this attribute is left blank */
                 script.insertItem(item);
+                }
+                }
             }
         }
     }
