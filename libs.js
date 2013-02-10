@@ -107,11 +107,29 @@ function listSongs(AuthToken) {
     var textStream = new QTextStream(Response, QIODevice.ReadOnly);
     var tinyURL = textStream.readAll();
     var listSongs = tinyURL;
-    //    Amarok.debug(tinyURL);
-    Amarok.debug(Amarok.Info.scriptPath());
+    
+			eval("var JSON_obj = " + tinyURL);
+    serviceDataJson = JSON_obj;
+    if (serviceDataJson != null) {
+        var items = serviceDataJson.data.items;
+        var newJsonFile = {
+            "data": [{}]
+        };
+
+        for (var i in items) {
+            newJsonFile.data.push({
+                "title": items[i].title, "id": items[i].id, "artist": items[i].artist
+                });
+        }
+    }
+
+    var jsonString = JSON.stringify(newJsonFile);
+ 
+    var jsonArray = new QByteArray();
+    jsonArray.append(jsonString);
     var file = new QFile(Amarok.Info.scriptPath() + "/ListSongs.json");
     file.open(QIODevice.WriteOnly);
-    file.write(Response);
+    file.write(jsonArray);
     file.close();
 }
 
