@@ -1,3 +1,7 @@
+v1.3:
+- Added bar for search
+- Problem with breakline in authToken
+- Download all songs
 v1.2:
 - Bash script functions passed to javascript.
 v1.0:
